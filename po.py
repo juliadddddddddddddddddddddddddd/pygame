@@ -86,7 +86,7 @@ def start_screen(screen, all_sprites):
                     (random.random() * width,
                      random.random() * height, 1, 1))
     font = pygame.font.SysFont('Franklin Gothic', 50)
-    text = font.render('СТАРТ', 50, (248, 244, 255))
+    text = font.render('СТАРТ', True, (248, 244, 255))
     text_x = width // 2 - text.get_width() // 2
     text_y = height // 2 - text.get_height() // 2
     text_w = text.get_width()
