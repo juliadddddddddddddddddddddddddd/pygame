@@ -86,7 +86,7 @@ def main_window(screen):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-
+ррррр
             # elif event.type == pygame.MOUSEBUTTONDOWN and text_x - 10 <= event.pos[0] <= (
             #         text_x + text_w + 20) and text_y - 10 <= event.pos[1] <= (
             #         text_y + text_h + 20):
