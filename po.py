@@ -41,13 +41,15 @@ class Button(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         if args:
             for i in args:
-                h = i
+                self.h = i
         else:
-            h = 95
+            self.h = 95
         self.x, self.y = pos
         image = load_image("кнопка.png")
-        self.image = pygame.transform.scale(image, (375, h))
-        self.rect = (self.x, self.y, 375, h)
+        self.image = pygame.transform.scale(image, (375, self.h))
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
         self.flag = flag
 
     def update(self):
@@ -138,7 +140,7 @@ def start_screen(screen, all_sprites):
         clock.tick(FPS)
 
 
-def main_window(screen, all_sprites):
+def main_window(screen, all_sprites, args):
     clock = pygame.time.Clock()
 
     intro_text = ["Тест Струпа",
@@ -150,39 +152,33 @@ def main_window(screen, all_sprites):
     fon = pygame.transform.scale(load_image('когнетивные.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
-    Strup = False
-    strup = Button((205, 200), all_sprites, Strup)
-    Schulte = False
-    schulte = Button((205, 300), all_sprites, Schulte)
-    Table = False
-    table = Button((205, 400), all_sprites, Table)
-    Cursor = False
-    cursor = Button((205, 500), all_sprites, Cursor, 100)
-    Result = False
-    result = Button((205, 645), all_sprites, Result)
+    strup = Button((205, 200), all_sprites, args[0])
+
+    schulte = Button((205, 300), all_sprites, args[1])
+
+    table = Button((205, 400), all_sprites, args[2])
+
+    cursor = Button((205, 500), all_sprites, args[3], 100)
+
+    result = Button((205, 645), all_sprites, args[4])
     font = pygame.font.SysFont('Franklin Gothic', 60)
-    text_coord = 150
     for line in intro_text:
         string_rendered = font.render(line, True, (248, 244, 255))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 35
-        intro_rect.top = text_coord
-        intro_rect.x = width // 2 - string_rendered.get_width() // 2
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
+        screen.blit(string_rendered, strup.rect)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
 
-            # elif event.type == pygame.MOUSEBUTTONDOWN and text_x - 10 <= event.pos[0] <= (
-            #         text_x + text_w + 20) and text_y - 10 <= event.pos[1] <= (
-            #         text_y + text_h + 20):
-            #             return
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                all_sprites.update()
 
         all_sprites.update()
         screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
+        for line in intro_text:
+            string_rendered = font.render(line, True, (248, 244, 255))
+            screen.blit(string_rendered, (strup.rect.x, strup.rect.y * intro_text.index(line), strup.h, 375))
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -190,7 +186,23 @@ def main_window(screen, all_sprites):
 def main():
     all_sprites = pygame.sprite.Group()
     start_screen(screen, all_sprites)
-    main_window(screen, all_sprites)
+    Strup = False
+    Schulte = False
+    Table = False
+    Cursor = False
+    Result = False
+    arg = [Strup, Schulte, Table, Cursor, Result]
+    main_window(screen, all_sprites, arg)
+    if Strup:
+        pass
+    elif Schulte:
+        pass
+    elif Table:
+        pass
+    elif Cursor:
+        pass
+    elif Result:
+        pass
 
     running = True
     pygame.display.flip()
