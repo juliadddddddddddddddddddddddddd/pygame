@@ -37,11 +37,17 @@ screen_rect = (0, 0, width, height)
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, pos, all_sprites, height=35, width=95, flag=False):
+    def __init__(self, pos, all_sprites, flag=False, *args):
         super().__init__(all_sprites)
+        if args:
+            for i in args:
+                h = i
+        else:
+            h = 95
         self.x, self.y = pos
-        self.image = load_image("кнопка.png")
-        self.rect = (self.x, self.y, width, height)
+        image = load_image("кнопка.png")
+        self.image = pygame.transform.scale(image, (375, h))
+        self.rect = (self.x, self.y, 375, h)
         self.flag = flag
 
     def update(self):
@@ -145,15 +151,15 @@ def main_window(screen, all_sprites):
                                  (width, height))
     screen.blit(fon, (0, 0))
     Strup = False
-    strup = Button((100, 200), all_sprites, Strup)
+    strup = Button((205, 200), all_sprites, Strup)
     Schulte = False
-    schulte = Button((100, 200), all_sprites, Schulte)
+    schulte = Button((205, 300), all_sprites, Schulte)
     Table = False
-    table = Button((100, 200), all_sprites, Table)
+    table = Button((205, 400), all_sprites, Table)
     Cursor = False
-    cursor = Button((100, 200), all_sprites, 75, Cursor)
+    cursor = Button((205, 500), all_sprites, Cursor, 100)
     Result = False
-    result = Button((100, 200), all_sprites, Result)
+    result = Button((205, 645), all_sprites, Result)
     font = pygame.font.SysFont('Franklin Gothic', 60)
     text_coord = 150
     for line in intro_text:
@@ -173,6 +179,7 @@ def main_window(screen, all_sprites):
             #         text_x + text_w + 20) and text_y - 10 <= event.pos[1] <= (
             #         text_y + text_h + 20):
             #             return
+
         all_sprites.update()
         screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
