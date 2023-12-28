@@ -3,6 +3,7 @@ import random
 import pygame
 import sys
 import os
+
 GRAVITY = 0.045
 FPS = 50
 pygame.init()
@@ -32,9 +33,23 @@ def load_image(name, colorkey=None):
     return image
 
 
-
-
 screen_rect = (0, 0, width, height)
+
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self, pos, all_sprites, height=35, width=95, flag=False):
+        super().__init__(all_sprites)
+        self.x, self.y = pos
+        self.image = load_image("кнопка.png")
+        self.rect = (self.x, self.y, width, height)
+        self.flag = flag
+
+    def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+                self.flag = True
+                return
+
 
 class Particle(pygame.sprite.Sprite):
     # сгенерируем частицы разного размера
@@ -66,6 +81,7 @@ class Particle(pygame.sprite.Sprite):
         if not self.rect.colliderect(screen_rect):
             self.kill()
 
+
 def create_particles(position, all_sprites):
     # количество создаваемых частиц
     particle_count = 20
@@ -73,10 +89,6 @@ def create_particles(position, all_sprites):
     numbers = range(-5, 6)
     for _ in range(particle_count):
         Particle(position, random.choice(numbers), random.choice(numbers), all_sprites)
-
-
-
-
 
 
 def start_screen(screen, all_sprites):
@@ -105,7 +117,7 @@ def start_screen(screen, all_sprites):
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN and not (text_x - 10 <= event.pos[0] <= (
                     text_x + text_w + 20) and text_y - 10 <= event.pos[1] <= (
-                    text_y + text_h + 20)):
+                                                                       text_y + text_h + 20)):
                 create_particles(pygame.mouse.get_pos(), all_sprites)
         all_sprites.update()
         screen.fill((0, 0, 0))
@@ -120,21 +132,32 @@ def start_screen(screen, all_sprites):
         clock.tick(FPS)
 
 
-def main_window(screen):
+def main_window(screen, all_sprites):
     clock = pygame.time.Clock()
+
     intro_text = ["Тест Струпа",
                   "Таблицы Шульте",
                   "Клиновидные таблицы",
                   "Курсор как инструмент",
                   "для поддержания внимания",
                   "Результат"]
-    fon = pygame.transform.scale(load_image('fon.jpg'),
+    fon = pygame.transform.scale(load_image('когнетивные.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
+    Strup = False
+    strup = Button((100, 200), all_sprites, Strup)
+    Schulte = False
+    schulte = Button((100, 200), all_sprites, Schulte)
+    Table = False
+    table = Button((100, 200), all_sprites, Table)
+    Cursor = False
+    cursor = Button((100, 200), all_sprites, 75, Cursor)
+    Result = False
+    result = Button((100, 200), all_sprites, Result)
     font = pygame.font.SysFont('Franklin Gothic', 60)
     text_coord = 150
     for line in intro_text:
-        string_rendered = font.render(line, 1, (248, 244, 255))
+        string_rendered = font.render(line, True, (248, 244, 255))
         intro_rect = string_rendered.get_rect()
         text_coord += 35
         intro_rect.top = text_coord
@@ -150,6 +173,9 @@ def main_window(screen):
             #         text_x + text_w + 20) and text_y - 10 <= event.pos[1] <= (
             #         text_y + text_h + 20):
             #             return
+        all_sprites.update()
+        screen.blit(fon, (0, 0))
+        all_sprites.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -157,7 +183,7 @@ def main_window(screen):
 def main():
     all_sprites = pygame.sprite.Group()
     start_screen(screen, all_sprites)
-    main_window(screen)
+    main_window(screen, all_sprites)
 
     running = True
     pygame.display.flip()
