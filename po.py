@@ -41,13 +41,15 @@ class Button(pygame.sprite.Sprite):
     def __init__(self, pos, all_sprites, flag=False, *args):
         super().__init__(all_sprites)
         if args:
-            for i in args:
+            for i, j in args:
                 self.h = i
+                self.w = j
         else:
             self.h = 95
+            self.w = 375
         self.x, self.y = pos
         image = load_image("кнопка.png", (255, 255, 255))
-        self.image = pygame.transform.scale(image, (375, self.h))
+        self.image = pygame.transform.scale(image, (self.w + 55, self.h + 42))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
@@ -129,7 +131,10 @@ def start_screen(screen, all_sprites):
     pygame.draw.rect(screen, COLOR_KOG, (finish_x - 10, finish_y - 10,
                                          finish_w + 20, finish_h + 20), 5)
     pygame.draw.rect(screen, COLOR_KOG, (35, 35,
-                                               width - 70, height - 70), 5)
+                                         width - 70, height - 70), 5)
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -149,6 +154,7 @@ def start_screen(screen, all_sprites):
                 create_particles(pygame.mouse.get_pos(), all_sprites)
         all_sprites.update()
         screen.fill((255, 255, 255))
+        screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
         screen.blit(name, (name_x, name_y))
         screen.blit(name1, (name1_x, name1_y))
@@ -167,6 +173,7 @@ def start_screen(screen, all_sprites):
 
 def main_window(screen, all_sprites, args):
     clock = pygame.time.Clock()
+    screen.fill((255, 255, 255))
 
     intro_text = ["Тест Струпа",
                   "Таблицы Шульте",
@@ -174,30 +181,43 @@ def main_window(screen, all_sprites, args):
                   "Курсор как инструмент",
                   "для поддержания внимания",
                   "Результат"]
-    fon = pygame.transform.scale(load_image('когнетивные.png'),
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
-    strup = Button((205, 200), all_sprites, args[0])
+    # fon = pygame.Surface((width, height))
+    # fon.set_alpha(20)
+    # fon.blit(fon_image, (0, 0))
 
-    schulte = Button((205, 300), all_sprites, args[1])
+    pygame.draw.rect(fon, "white", fon.get_rect(), 10)
 
-    table = Button((205, 400), all_sprites, args[2])
-
-    cursor = Button((205, 500), all_sprites, args[3], 100)
-
-    result = Button((205, 645), all_sprites, args[4])
     font = pygame.font.SysFont('Franklin Gothic', 60)
     string_rendered1 = font.render(intro_text[0], True, (248, 244, 255))
-    screen.blit(string_rendered1, strup.rect_for_text)
     string_rendered2 = font.render(intro_text[1], True, (248, 244, 255))
-    screen.blit(string_rendered2, schulte.rect_for_text)
     string_rendered3 = font.render(intro_text[2], True, (248, 244, 255))
-    screen.blit(string_rendered3, table.rect_for_text)
     string_rendered4 = font.render(intro_text[3], True, (248, 244, 255))
-    screen.blit(string_rendered4, cursor.rect_for_text)
     string_rendered5 = font.render(intro_text[4], True, (248, 244, 255))
-    screen.blit(string_rendered5, cursor.rect_for_text)
     string_rendered6 = font.render(intro_text[5], True, (248, 244, 255))
+
+    strup = Button((205, 200), all_sprites, args[0], (string_rendered1.get_height(), string_rendered1.get_width()))
+
+    schulte = Button((205, 300), all_sprites, args[1], (string_rendered2.get_height(), string_rendered2.get_width()))
+
+    table = Button((205, 400), all_sprites, args[2], (string_rendered3.get_height(), string_rendered3.get_width()))
+
+    cursor = Button((205, 500), all_sprites, args[3], (string_rendered4.get_height() + string_rendered5.get_height(),
+                    string_rendered5.get_width()))
+
+    result = Button((205, 645), all_sprites, args[4], (string_rendered6.get_height(), string_rendered6.get_width()))
+    screen.blit(string_rendered1, strup.rect_for_text)
+
+    screen.blit(string_rendered2, schulte.rect_for_text)
+
+    screen.blit(string_rendered3, table.rect_for_text)
+
+    screen.blit(string_rendered4, cursor.rect_for_text)
+
+    screen.blit(string_rendered5, (cursor.rect_for_text[0], cursor.rect_for_text[1] + 95, cursor.rect_for_text[2], cursor.rect_for_text[3]))
+
     screen.blit(string_rendered6, result.rect_for_text)
     while True:
         for event in pygame.event.get():
@@ -210,17 +230,12 @@ def main_window(screen, all_sprites, args):
         all_sprites.update()
         screen.blit(fon, (0, 0))
         all_sprites.draw(screen)
-        string_rendered1 = font.render(intro_text[0], True, (248, 244, 255))
+
         screen.blit(string_rendered1, strup.rect_for_text)
-        string_rendered2 = font.render(intro_text[1], True, (248, 244, 255))
         screen.blit(string_rendered2, schulte.rect_for_text)
-        string_rendered3 = font.render(intro_text[2], True, (248, 244, 255))
         screen.blit(string_rendered3, table.rect_for_text)
-        string_rendered4 = font.render(intro_text[3], True, (248, 244, 255))
         screen.blit(string_rendered4, cursor.rect_for_text)
-        string_rendered5 = font.render(intro_text[4], True, (248, 244, 255))
-        screen.blit(string_rendered5, cursor.rect_for_text)
-        string_rendered6 = font.render(intro_text[5], True, (248, 244, 255))
+        screen.blit(string_rendered5, (cursor.rect_for_text[0], cursor.rect_for_text[1] + 38, cursor.rect_for_text[2], cursor.rect_for_text[3]))
         screen.blit(string_rendered6, result.rect_for_text)
         pygame.display.flip()
         clock.tick(FPS)
