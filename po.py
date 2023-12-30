@@ -13,6 +13,70 @@ screen = pygame.display.set_mode((width, height))
 COLOR_KOG = (3, 183, 172)
 
 
+def Strup(screen):
+    clock = pygame.time.Clock()
+    screen.fill((255, 255, 255))
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
+    while True:
+        even_list = pygame.event.get()
+        for event in even_list:
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(fon, (0, 0))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def Schulte(screen):
+    clock = pygame.time.Clock()
+    screen.fill((255, 255, 255))
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
+    while True:
+        even_list = pygame.event.get()
+        for event in even_list:
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(fon, (0, 0))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def Table(screen):
+    clock = pygame.time.Clock()
+    screen.fill((255, 255, 255))
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
+    while True:
+        even_list = pygame.event.get()
+        for event in even_list:
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(fon, (0, 0))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def Cursor(screen):
+    clock = pygame.time.Clock()
+    screen.fill((255, 255, 255))
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
+    while True:
+        even_list = pygame.event.get()
+        for event in even_list:
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(fon, (0, 0))
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 def terminate():
     pygame.quit()
     sys.exit()
@@ -56,11 +120,10 @@ class Button(pygame.sprite.Sprite):
         self.rect_for_text = (self.rect.x + 25, self.rect.y + 25, self.rect.width, self.rect.height)
         self.flag = flag
 
-    def update(self):
-        for event in pygame.event.get():
+    def update(self, even_list):
+        for event in even_list:
             if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
                 self.flag = True
-                return
 
 
 class Particle(pygame.sprite.Sprite):
@@ -171,7 +234,8 @@ def start_screen(screen, all_sprites):
         clock.tick(FPS)
 
 
-def main_window(screen, all_sprites, args):
+def main_window(screen, all_sprites):
+    global Strup, Schulte, Table, Cursor
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
 
@@ -197,45 +261,55 @@ def main_window(screen, all_sprites, args):
     string_rendered4 = font.render(intro_text[3], True, (248, 244, 255))
     string_rendered5 = font.render(intro_text[4], True, (248, 244, 255))
     string_rendered6 = font.render(intro_text[5], True, (248, 244, 255))
+    flag = False
 
-    strup = Button((205, 200), all_sprites, args[0], (string_rendered1.get_height(), string_rendered1.get_width()))
+    strup = Button((screen.get_width() // 2 - string_rendered1.get_width() // 2, 200), all_sprites, flag,
+                   (string_rendered1.get_height(), string_rendered1.get_width()))
 
-    schulte = Button((205, 300), all_sprites, args[1], (string_rendered2.get_height(), string_rendered2.get_width()))
+    schulte = Button((screen.get_width() // 2 - string_rendered2.get_width() // 2, 300), all_sprites, flag,
+                     (string_rendered2.get_height(), string_rendered2.get_width()))
 
-    table = Button((205, 400), all_sprites, args[2], (string_rendered3.get_height(), string_rendered3.get_width()))
+    table = Button((screen.get_width() // 2 - string_rendered3.get_width() // 2, 400), all_sprites, flag,
+                   (string_rendered3.get_height(), string_rendered3.get_width()))
 
-    cursor = Button((205, 500), all_sprites, args[3], (string_rendered4.get_height() + string_rendered5.get_height(),
-                    string_rendered5.get_width()))
-
-    result = Button((205, 645), all_sprites, args[4], (string_rendered6.get_height(), string_rendered6.get_width()))
+    cursor = Button((screen.get_width() // 2 - string_rendered5.get_width() // 2, 500), all_sprites, flag,
+                    (string_rendered4.get_height() + string_rendered5.get_height(),
+                     string_rendered5.get_width()))
+    result = Button((screen.get_width() // 2 - string_rendered6.get_width() // 2, 645), all_sprites, flag,
+                    (string_rendered6.get_height(), string_rendered6.get_width()))
     screen.blit(string_rendered1, strup.rect_for_text)
-
     screen.blit(string_rendered2, schulte.rect_for_text)
-
     screen.blit(string_rendered3, table.rect_for_text)
-
     screen.blit(string_rendered4, cursor.rect_for_text)
-
-    screen.blit(string_rendered5, (cursor.rect_for_text[0], cursor.rect_for_text[1] + 95, cursor.rect_for_text[2], cursor.rect_for_text[3]))
-
+    screen.blit(string_rendered5, (
+        cursor.rect_for_text[0], cursor.rect_for_text[1] + 95, cursor.rect_for_text[2], cursor.rect_for_text[3]))
     screen.blit(string_rendered6, result.rect_for_text)
+    group = pygame.sprite.Group(strup, schulte, table, cursor, result)
     while True:
-        for event in pygame.event.get():
+        even_list = pygame.event.get()
+        for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                all_sprites.update()
+                group.update(even_list)
+                if strup.flag:
+                    Strup(screen)
+                elif schulte.flag:
+                    Schulte(screen)
+                elif cursor.flag:
+                    Cursor(screen)
+                elif table.flag:
+                    Table(screen)
 
-        all_sprites.update()
         screen.blit(fon, (0, 0))
-        all_sprites.draw(screen)
+        group.draw(screen)
 
         screen.blit(string_rendered1, strup.rect_for_text)
         screen.blit(string_rendered2, schulte.rect_for_text)
         screen.blit(string_rendered3, table.rect_for_text)
         screen.blit(string_rendered4, cursor.rect_for_text)
-        screen.blit(string_rendered5, (cursor.rect_for_text[0], cursor.rect_for_text[1] + 38, cursor.rect_for_text[2], cursor.rect_for_text[3]))
+        screen.blit(string_rendered5, (
+            cursor.rect_for_text[0], cursor.rect_for_text[1] + 38, cursor.rect_for_text[2], cursor.rect_for_text[3]))
         screen.blit(string_rendered6, result.rect_for_text)
         pygame.display.flip()
         clock.tick(FPS)
@@ -244,23 +318,7 @@ def main_window(screen, all_sprites, args):
 def main():
     all_sprites = pygame.sprite.Group()
     start_screen(screen, all_sprites)
-    Strup = False
-    Schulte = False
-    Table = False
-    Cursor = False
-    Result = False
-    arg = [Strup, Schulte, Table, Cursor, Result]
-    main_window(screen, all_sprites, arg)
-    if Strup:
-        pass
-    elif Schulte:
-        pass
-    elif Table:
-        pass
-    elif Cursor:
-        pass
-    elif Result:
-        pass
+    main_window(screen, all_sprites)
 
     running = True
     pygame.display.flip()
