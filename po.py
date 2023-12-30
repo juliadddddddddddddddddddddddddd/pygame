@@ -10,7 +10,7 @@ pygame.init()
 width = 800
 height = 800
 screen = pygame.display.set_mode((width, height))
-COLOR_KOG = (3, 183, 172)
+BLACK = (11, 76, 87)
 
 
 def Strup(screen):
@@ -24,11 +24,14 @@ def Strup(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
 
-
+# эти класы потом нужно будет заменить
+# также нужно добавить кнопку для того чтобы возвращаться обратно в меню
 def Schulte(screen):
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
@@ -40,6 +43,8 @@ def Schulte(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
@@ -56,6 +61,8 @@ def Table(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
@@ -72,9 +79,13 @@ def Cursor(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
+
+
 def Result(screen):
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
@@ -86,6 +97,8 @@ def Result(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
@@ -126,12 +139,12 @@ class Button(pygame.sprite.Sprite):
             self.h = 95
             self.w = 375
         self.x, self.y = pos
-        image = load_image("кнопка.png", (255, 255, 255))
-        self.image = pygame.transform.scale(image, (self.w + 55, self.h + 42))
+        image = load_image("кнопка1.png", (255, 255, 255))
+        self.image = pygame.transform.scale(image, (self.w, self.h))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        self.rect_for_text = (self.rect.x + 25, self.rect.y + 25, self.rect.width, self.rect.height)
+        self.rect_for_text = (self.rect.x + 15, self.rect.y, self.rect.width, self.rect.height)
         self.flag = flag
 
     def update(self, even_list):
@@ -150,23 +163,14 @@ class Particle(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         self.image = random.choice(self.fire)
         self.rect = self.image.get_rect()
-
-        # у каждой частицы своя скорость — это вектор
         self.velocity = [dx, dy]
-        # и свои координаты
         self.rect.x, self.rect.y = pos
-
-        # гравитация будет одинаковой (значение константы)
         self.gravity = GRAVITY
 
     def update(self):
-        # применяем гравитационный эффект:
-        # движение с ускорением под действием гравитации
         self.velocity[1] += self.gravity
-        # перемещаем частицу
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
-        # убиваем, если частица ушла за экран
         if not self.rect.colliderect(screen_rect):
             self.kill()
 
@@ -182,11 +186,12 @@ def create_particles(position, all_sprites):
 
 def start_screen(screen, all_sprites):
     clock = pygame.time.Clock()
-    font = pygame.font.SysFont('Franklin Gothic', 50)
-    start = font.render('СТАРТ', True, COLOR_KOG)
-    finish = font.render('ВЫХОД', True, COLOR_KOG)
-    name = font.render('Приложение для развития навыков при', True, COLOR_KOG)
-    name1 = font.render('подготовке к ЕГЭ по информатике', True, COLOR_KOG)
+    fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
+    font = pygame.font.Font(fullname, 37)
+    start = font.render(' Начать', True, BLACK)
+    finish = font.render('Выйти', True, BLACK)
+    name = font.render('Приложение для развития навыков при', True, BLACK)
+    name1 = font.render('подготовке к ЕГЭ по информатике', True, BLACK)
     start_x = 235
     start_y = 400
     start_w = start.get_width()
@@ -203,12 +208,6 @@ def start_screen(screen, all_sprites):
     name1_x = width // 2 - name1.get_width() // 2
     name1_y = height // 2 - name1.get_height() // 2 - 105
     screen.blit(name1, (name1_x, name1_y))
-    pygame.draw.rect(screen, COLOR_KOG, (start_x - 10, start_y - 10,
-                                         start_w + 20, start_h + 20), 5)
-    pygame.draw.rect(screen, COLOR_KOG, (finish_x - 10, finish_y - 10,
-                                         finish_w + 20, finish_h + 20), 5)
-    pygame.draw.rect(screen, COLOR_KOG, (35, 35,
-                                         width - 70, height - 70), 5)
     fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
@@ -237,12 +236,6 @@ def start_screen(screen, all_sprites):
         screen.blit(name1, (name1_x, name1_y))
         screen.blit(start, (start_x, start_y))
         screen.blit(finish, (finish_x, finish_y))
-        pygame.draw.rect(screen, COLOR_KOG, (start_x - 10, start_y - 10,
-                                             start_w + 20, start_h + 20), 5)
-        pygame.draw.rect(screen, COLOR_KOG, (finish_x - 10, finish_y - 10,
-                                             finish_w + 20, finish_h + 20), 5)
-        pygame.draw.rect(screen, COLOR_KOG, (35, 35,
-                                             width - 70, height - 70), 5)
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -262,19 +255,16 @@ def main_window(screen, all_sprites):
     fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
-    # fon = pygame.Surface((width, height))
-    # fon.set_alpha(20)
-    # fon.blit(fon_image, (0, 0))
 
     pygame.draw.rect(fon, "white", fon.get_rect(), 10)
-
-    font = pygame.font.SysFont('Franklin Gothic', 60)
-    string_rendered1 = font.render(intro_text[0], True, (248, 244, 255))
-    string_rendered2 = font.render(intro_text[1], True, (248, 244, 255))
-    string_rendered3 = font.render(intro_text[2], True, (248, 244, 255))
-    string_rendered4 = font.render(intro_text[3], True, (248, 244, 255))
-    string_rendered5 = font.render(intro_text[4], True, (248, 244, 255))
-    string_rendered6 = font.render(intro_text[5], True, (248, 244, 255))
+    fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
+    font = pygame.font.Font(fullname, 42)
+    string_rendered1 = font.render(intro_text[0], True, BLACK)
+    string_rendered2 = font.render(intro_text[1], True, BLACK)
+    string_rendered3 = font.render(intro_text[2], True, BLACK)
+    string_rendered4 = font.render(intro_text[3], True, BLACK)
+    string_rendered5 = font.render(intro_text[4], True, BLACK)
+    string_rendered6 = font.render(intro_text[5], True, BLACK)
     flag = False
 
     strup = Button((screen.get_width() // 2 - string_rendered1.get_width() // 2, 200), all_sprites, flag,
@@ -308,14 +298,19 @@ def main_window(screen, all_sprites):
                 group.update(even_list)
                 if strup.flag:
                     Strup(screen)
+                    return
                 elif schulte.flag:
                     Schulte(screen)
+                    return
                 elif cursor.flag:
                     Cursor(screen)
+                    return
                 elif table.flag:
                     Table(screen)
+                    return
                 elif result.flag:
                     Result(screen)
+                    return
 
         screen.blit(fon, (0, 0))
         group.draw(screen)
@@ -329,12 +324,32 @@ def main_window(screen, all_sprites):
         screen.blit(string_rendered6, result.rect_for_text)
         pygame.display.flip()
         clock.tick(FPS)
+def final_window(screen): # это окно нужно будет потом изменить (возможно здесь как раз таки и выводить результаты)
+    clock = pygame.time.Clock()
+    fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
+    font = pygame.font.Font(fullname, 37)
+    fon = pygame.transform.scale(load_image('когнетивные1.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
+    while True:
+        even_list = pygame.event.get()
+        for event in even_list:
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                return
+
+        screen.blit(fon, (0, 0))
+        pygame.display.flip()
+        clock.tick(FPS)
+
 
 
 def main():
     all_sprites = pygame.sprite.Group()
     start_screen(screen, all_sprites)
     main_window(screen, all_sprites)
+    final_window(screen)
 
     running = True
     pygame.display.flip()
@@ -345,6 +360,7 @@ def main():
 
         screen.fill((0, 0, 0))
         pygame.display.flip()
+        running = False
 
     pygame.quit()
 
