@@ -75,6 +75,20 @@ def Cursor(screen):
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
+def Result(screen):
+    clock = pygame.time.Clock()
+    screen.fill((255, 255, 255))
+    fon = pygame.transform.scale(load_image('когнетивные2.png'),
+                                 (width, height))
+    screen.blit(fon, (0, 0))
+    while True:
+        even_list = pygame.event.get()
+        for event in even_list:
+            if event.type == pygame.QUIT:
+                terminate()
+        screen.blit(fon, (0, 0))
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 def terminate():
@@ -235,7 +249,7 @@ def start_screen(screen, all_sprites):
 
 
 def main_window(screen, all_sprites):
-    global Strup, Schulte, Table, Cursor
+    global Strup, Schulte, Table, Cursor, Result
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
 
@@ -300,6 +314,8 @@ def main_window(screen, all_sprites):
                     Cursor(screen)
                 elif table.flag:
                     Table(screen)
+                elif result.flag:
+                    Result(screen)
 
         screen.blit(fon, (0, 0))
         group.draw(screen)
