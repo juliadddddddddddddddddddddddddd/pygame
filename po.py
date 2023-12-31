@@ -11,6 +11,10 @@ pygame.mixer.pre_init(44100, -16, 1, 512)
 pygame.init()
 fullname = os.path.join('data', "звук_нажатия_на_кнопку.ogg")
 s = pygame.mixer.Sound(fullname)
+fullname = os.path.join('data', "zvuk3.wav")
+star = pygame.mixer.Sound(fullname)
+
+
 width = 800
 height = 800
 screen = pygame.display.set_mode((width, height))
@@ -234,7 +238,7 @@ def start_screen(screen, all_sprites):
             elif event.type == pygame.MOUSEBUTTONDOWN and not (start_x - 10 <= event.pos[0] <= (
                     start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
                                                                        start_y + start_h + 20)):
-                s.play()
+                star.play()
                 create_particles(pygame.mouse.get_pos(), all_sprites)
         all_sprites.update()
         screen.fill((255, 255, 255))
