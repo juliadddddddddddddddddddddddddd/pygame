@@ -1,12 +1,16 @@
 import random
-
+from pygame import mixer
 import pygame
 import sys
 import os
 
 GRAVITY = 0.045
 FPS = 50
+pygame.mixer.pre_init(44100, -16, 1, 512)
+
 pygame.init()
+fullname = os.path.join('data', "звук_нажатия_на_кнопку.ogg")
+s = pygame.mixer.Sound(fullname)
 width = 800
 height = 800
 screen = pygame.display.set_mode((width, height))
@@ -29,6 +33,7 @@ def Strup(screen):
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
+
 
 # эти класы потом нужно будет заменить
 # также нужно добавить кнопку для того чтобы возвращаться обратно в меню
@@ -150,11 +155,11 @@ class Button(pygame.sprite.Sprite):
     def update(self, even_list):
         for event in even_list:
             if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+                s.play()
                 self.flag = True
 
 
 class Particle(pygame.sprite.Sprite):
-    # сгенерируем частицы разного размера
     fire = [load_image("star.png")]
     for scale in (5, 10, 20):
         fire.append(pygame.transform.scale(fire[0], (scale, scale)))
@@ -219,14 +224,17 @@ def start_screen(screen, all_sprites):
             elif event.type == pygame.MOUSEBUTTONDOWN and start_x - 10 <= event.pos[0] <= (
                     start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
                     start_y + start_h + 20):
+                s.play()
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN and finish_x - 10 <= event.pos[0] <= (
                     finish_x + finish_w + 20) and finish_y - 10 <= event.pos[1] <= (
                     finish_y + finish_h + 20):
+                s.play()
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN and not (start_x - 10 <= event.pos[0] <= (
                     start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
                                                                        start_y + start_h + 20)):
+                s.play()
                 create_particles(pygame.mouse.get_pos(), all_sprites)
         all_sprites.update()
         screen.fill((255, 255, 255))
@@ -324,11 +332,11 @@ def main_window(screen, all_sprites):
         screen.blit(string_rendered6, result.rect_for_text)
         pygame.display.flip()
         clock.tick(FPS)
-def final_window(screen): # это окно нужно будет потом изменить (возможно здесь как раз таки и выводить результаты)
+
+
+def final_window(screen):  # это окно нужно будет потом изменить (возможно здесь как раз таки и выводить результаты)
     clock = pygame.time.Clock()
-    fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
-    font = pygame.font.Font(fullname, 37)
-    fon = pygame.transform.scale(load_image('когнетивные1.png'),
+    fon = pygame.transform.scale(load_image('когнетивные.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
     while True:
@@ -342,7 +350,6 @@ def final_window(screen): # это окно нужно будет потом и�
         screen.blit(fon, (0, 0))
         pygame.display.flip()
         clock.tick(FPS)
-
 
 
 def main():
