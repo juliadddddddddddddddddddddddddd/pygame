@@ -13,7 +13,8 @@ fullname = os.path.join('data', "звук_нажатия_на_кнопку.ogg")
 s = pygame.mixer.Sound(fullname)
 fullname = os.path.join('data', "zvuk3.wav")
 star = pygame.mixer.Sound(fullname)
-
+fullname = os.path.join('data', "музыка_на_фон.mp3")
+pygame.mixer.music.load(fullname)
 
 width = 800
 height = 800
@@ -138,8 +139,8 @@ screen_rect = (0, 0, width, height)
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, pos, all_sprites, flag=False, *args):
-        super().__init__(all_sprites)
+    def __init__(self, pos, flag=False, *args):
+        super().__init__()
         if args:
             for i, j in args:
                 self.h = i
@@ -160,7 +161,7 @@ class Button(pygame.sprite.Sprite):
         for event in even_list:
             if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
                 s.play()
-                self.flag = True
+                self.flag = not self.flag
 
 
 class Particle(pygame.sprite.Sprite):
@@ -219,9 +220,15 @@ def start_screen(screen, all_sprites):
     screen.blit(name1, (name1_x, name1_y))
     fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
+    nota = pygame.transform.scale(load_image('нота.png'),
+                                  (45, 45))
     screen.blit(fon, (0, 0))
+    screen.blit(nota, (0, 0))
+    flag = False
+    music = Button((0, 0), flag, (45, 45))
     while True:
-        for event in pygame.event.get():
+        even_list = pygame.event.get()
+        for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
 
@@ -235,6 +242,14 @@ def start_screen(screen, all_sprites):
                     finish_y + finish_h + 20):
                 s.play()
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN and music.x <= event.pos[0] <= (
+                    music.x + music.w) and music.y <= event.pos[1] <= (
+                    music.y + music.h):
+                music.update(even_list)
+                if music.flag:
+                    pygame.mixer.music.play(-1)
+                else:
+                    pygame.mixer.music.stop()
             elif event.type == pygame.MOUSEBUTTONDOWN and not (start_x - 10 <= event.pos[0] <= (
                     start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
                                                                        start_y + start_h + 20)):
@@ -243,6 +258,7 @@ def start_screen(screen, all_sprites):
         all_sprites.update()
         screen.fill((255, 255, 255))
         screen.blit(fon, (0, 0))
+        screen.blit(nota, (0, 0))
         all_sprites.draw(screen)
         screen.blit(name, (name_x, name_y))
         screen.blit(name1, (name1_x, name1_y))
@@ -267,8 +283,9 @@ def main_window(screen, all_sprites):
     fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
     screen.blit(fon, (0, 0))
-
-    pygame.draw.rect(fon, "white", fon.get_rect(), 10)
+    nota = pygame.transform.scale(load_image('нота.png'),
+                                  (45, 45))
+    screen.blit(nota, (0, 0))
     fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
     font = pygame.font.Font(fullname, 42)
     string_rendered1 = font.render(intro_text[0], True, BLACK)
@@ -279,20 +296,22 @@ def main_window(screen, all_sprites):
     string_rendered6 = font.render(intro_text[5], True, BLACK)
     flag = False
 
-    strup = Button((screen.get_width() // 2 - string_rendered1.get_width() // 2, 200), all_sprites, flag,
+    strup = Button((screen.get_width() // 2 - string_rendered1.get_width() // 2, 200), flag,
                    (string_rendered1.get_height(), string_rendered1.get_width()))
 
-    schulte = Button((screen.get_width() // 2 - string_rendered2.get_width() // 2, 300), all_sprites, flag,
+    schulte = Button((screen.get_width() // 2 - string_rendered2.get_width() // 2, 300), flag,
                      (string_rendered2.get_height(), string_rendered2.get_width()))
 
-    table = Button((screen.get_width() // 2 - string_rendered3.get_width() // 2, 400), all_sprites, flag,
+    table = Button((screen.get_width() // 2 - string_rendered3.get_width() // 2, 400), flag,
                    (string_rendered3.get_height(), string_rendered3.get_width()))
 
-    cursor = Button((screen.get_width() // 2 - string_rendered5.get_width() // 2, 500), all_sprites, flag,
+    cursor = Button((screen.get_width() // 2 - string_rendered5.get_width() // 2, 500), flag,
                     (string_rendered4.get_height() + string_rendered5.get_height(),
                      string_rendered5.get_width()))
-    result = Button((screen.get_width() // 2 - string_rendered6.get_width() // 2, 645), all_sprites, flag,
+    result = Button((screen.get_width() // 2 - string_rendered6.get_width() // 2, 645), flag,
                     (string_rendered6.get_height(), string_rendered6.get_width()))
+
+    music = Button((0, 0), flag, (45, 45))
     screen.blit(string_rendered1, strup.rect_for_text)
     screen.blit(string_rendered2, schulte.rect_for_text)
     screen.blit(string_rendered3, table.rect_for_text)
@@ -323,8 +342,17 @@ def main_window(screen, all_sprites):
                 elif result.flag:
                     Result(screen)
                     return
+                elif event.type == pygame.MOUSEBUTTONDOWN and music.x <= event.pos[0] <= (
+                        music.x + music.w) and music.y <= event.pos[1] <= (
+                        music.y + music.h):
+                    music.update(even_list)
+                    if music.flag:
+                        pygame.mixer.music.play(-1)
+                    else:
+                        pygame.mixer.music.stop()
 
         screen.blit(fon, (0, 0))
+        screen.blit(nota, (0, 0))
         group.draw(screen)
 
         screen.blit(string_rendered1, strup.rect_for_text)
