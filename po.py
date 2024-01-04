@@ -139,7 +139,7 @@ screen_rect = (0, 0, width, height)
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, pos, flag=False, *args):
+    def __init__(self, pos, flag=False, touch=False, *args):
         super().__init__()
         if args:
             for i, j in args:
@@ -156,12 +156,17 @@ class Button(pygame.sprite.Sprite):
         self.rect.y = self.y
         self.rect_for_text = (self.rect.x + 15, self.rect.y, self.rect.width, self.rect.height)
         self.flag = flag
+        self.touch = touch
 
     def update(self, even_list):
         for event in even_list:
             if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
                 s.play()
                 self.flag = not self.flag
+            elif event.type == pygame.MOUSEMOTION and self.rect.collidepoint(event.pos):
+                self.touch = True
+            elif event.type == pygame.MOUSEMOTION and not (self.rect.collidepoint(event.pos)):
+                self.touch = False
 
 
 class Particle(pygame.sprite.Sprite):
@@ -225,7 +230,8 @@ def start_screen(screen, all_sprites):
     screen.blit(fon, (0, 0))
     screen.blit(nota, (0, 0))
     flag = False
-    music = Button((0, 0), flag, (45, 45))
+    touch = False
+    music = Button((0, 0), flag, touch,  (45, 45))
     while True:
         even_list = pygame.event.get()
         for event in even_list:
@@ -269,7 +275,7 @@ def start_screen(screen, all_sprites):
         clock.tick(FPS)
 
 
-def main_window(screen, all_sprites):
+def main_window(screen):
     global Strup, Schulte, Table, Cursor, Result
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
@@ -288,37 +294,40 @@ def main_window(screen, all_sprites):
     screen.blit(nota, (0, 0))
     fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
     font = pygame.font.Font(fullname, 42)
-    string_rendered1 = font.render(intro_text[0], True, BLACK)
-    string_rendered2 = font.render(intro_text[1], True, BLACK)
-    string_rendered3 = font.render(intro_text[2], True, BLACK)
-    string_rendered4 = font.render(intro_text[3], True, BLACK)
-    string_rendered5 = font.render(intro_text[4], True, BLACK)
-    string_rendered6 = font.render(intro_text[5], True, BLACK)
+    strup1 = font.render(intro_text[0], True, BLACK)
+    schulte1 = font.render(intro_text[1], True, BLACK)
+    table1 = font.render(intro_text[2], True, BLACK)
+    cursor11 = font.render(intro_text[3], True, BLACK)
+    cursor12 = font.render(intro_text[4], True, BLACK)
+    result1 = font.render(intro_text[5], True, BLACK)
+
     flag = False
+    touch = False
 
-    strup = Button((screen.get_width() // 2 - string_rendered1.get_width() // 2, 200), flag,
-                   (string_rendered1.get_height(), string_rendered1.get_width()))
+    strup = Button((screen.get_width() // 2 - strup1.get_width() // 2, 200), flag, touch,
+                   (strup1.get_height(), strup1.get_width()))
 
-    schulte = Button((screen.get_width() // 2 - string_rendered2.get_width() // 2, 300), flag,
-                     (string_rendered2.get_height(), string_rendered2.get_width()))
+    schulte = Button((screen.get_width() // 2 - schulte1.get_width() // 2, 300), flag, touch,
+                     (schulte1.get_height(), schulte1.get_width()))
 
-    table = Button((screen.get_width() // 2 - string_rendered3.get_width() // 2, 400), flag,
-                   (string_rendered3.get_height(), string_rendered3.get_width()))
+    table = Button((screen.get_width() // 2 - table1.get_width() // 2, 400), flag, touch,
+                   (table1.get_height(), table1.get_width()))
 
-    cursor = Button((screen.get_width() // 2 - string_rendered5.get_width() // 2, 500), flag,
-                    (string_rendered4.get_height() + string_rendered5.get_height(),
-                     string_rendered5.get_width()))
-    result = Button((screen.get_width() // 2 - string_rendered6.get_width() // 2, 645), flag,
-                    (string_rendered6.get_height(), string_rendered6.get_width()))
+    cursor = Button((screen.get_width() // 2 - cursor12.get_width() // 2, 500), flag, touch,
+                    (cursor11.get_height() + cursor12.get_height(),
+                     cursor12.get_width()))
 
-    music = Button((0, 0), flag, (45, 45))
-    screen.blit(string_rendered1, strup.rect_for_text)
-    screen.blit(string_rendered2, schulte.rect_for_text)
-    screen.blit(string_rendered3, table.rect_for_text)
-    screen.blit(string_rendered4, cursor.rect_for_text)
-    screen.blit(string_rendered5, (
+    result = Button((screen.get_width() // 2 - result1.get_width() // 2, 645), flag, touch,
+                    (result1.get_height(), result1.get_width()))
+
+    music = Button((0, 0), flag, touch, (45, 45))
+    screen.blit(strup1, strup.rect_for_text)
+    screen.blit(schulte1, schulte.rect_for_text)
+    screen.blit(table1, table.rect_for_text)
+    screen.blit(cursor11, cursor.rect_for_text)
+    screen.blit(cursor12, (
         cursor.rect_for_text[0], cursor.rect_for_text[1] + 95, cursor.rect_for_text[2], cursor.rect_for_text[3]))
-    screen.blit(string_rendered6, result.rect_for_text)
+    screen.blit(result1, result.rect_for_text)
     group = pygame.sprite.Group(strup, schulte, table, cursor, result)
     while True:
         even_list = pygame.event.get()
@@ -329,19 +338,24 @@ def main_window(screen, all_sprites):
                 group.update(even_list)
                 if strup.flag:
                     Strup(screen)
-                    return
+                    final_window(screen)
+                    strup.flag = False
                 elif schulte.flag:
                     Schulte(screen)
-                    return
+                    final_window(screen)
+                    schulte.flag = False
                 elif cursor.flag:
                     Cursor(screen)
-                    return
+                    final_window(screen)
+                    cursor.flag = False
                 elif table.flag:
                     Table(screen)
-                    return
+                    final_window(screen)
+                    table.flag = False
                 elif result.flag:
                     Result(screen)
-                    return
+                    final_window(screen)
+                    result.flag = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and music.x <= event.pos[0] <= (
                         music.x + music.w) and music.y <= event.pos[1] <= (
                         music.y + music.h):
@@ -350,18 +364,42 @@ def main_window(screen, all_sprites):
                         pygame.mixer.music.play(-1)
                     else:
                         pygame.mixer.music.stop()
+            elif event.type == pygame.MOUSEMOTION:
+                group.update(even_list)
+                pass
 
         screen.blit(fon, (0, 0))
         screen.blit(nota, (0, 0))
         group.draw(screen)
+        strup2 = font.render(intro_text[0], True, BLACK, (179, 233, 230))
+        schulte2 = font.render(intro_text[1], True, BLACK, (179, 233, 230))
+        table2 = font.render(intro_text[2], True, BLACK, (179, 233, 230))
+        cursor21 = font.render(intro_text[3], True, BLACK, (179, 233, 230))
+        cursor22 = font.render(intro_text[4], True, BLACK, (179, 233, 230))
+        result2 = font.render(intro_text[5], True, BLACK, (179, 233, 230))
 
-        screen.blit(string_rendered1, strup.rect_for_text)
-        screen.blit(string_rendered2, schulte.rect_for_text)
-        screen.blit(string_rendered3, table.rect_for_text)
-        screen.blit(string_rendered4, cursor.rect_for_text)
-        screen.blit(string_rendered5, (
+        if strup.touch:
+
+            screen.blit(strup2, strup.rect_for_text)
+        elif schulte.touch:
+            screen.blit(schulte2, schulte.rect_for_text)
+        elif cursor.touch:
+            screen.blit(cursor21, cursor.rect_for_text)
+            screen.blit(cursor22, (
+                cursor.rect_for_text[0], cursor.rect_for_text[1] + 38, cursor.rect_for_text[2],
+                cursor.rect_for_text[3]))
+        elif table.touch:
+            screen.blit(table2, table.rect_for_text)
+        elif result.touch:
+            screen.blit(result2, result.rect_for_text)
+
+        screen.blit(strup1, strup.rect_for_text)
+        screen.blit(schulte1, schulte.rect_for_text)
+        screen.blit(table1, table.rect_for_text)
+        screen.blit(cursor11, cursor.rect_for_text)
+        screen.blit(cursor12, (
             cursor.rect_for_text[0], cursor.rect_for_text[1] + 38, cursor.rect_for_text[2], cursor.rect_for_text[3]))
-        screen.blit(string_rendered6, result.rect_for_text)
+        screen.blit(result1, result.rect_for_text)
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -387,7 +425,7 @@ def final_window(screen):  # это окно нужно будет потом и
 def main():
     all_sprites = pygame.sprite.Group()
     start_screen(screen, all_sprites)
-    main_window(screen, all_sprites)
+    main_window(screen)
     final_window(screen)
 
     running = True
