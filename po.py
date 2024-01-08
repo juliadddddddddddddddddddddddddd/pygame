@@ -1,5 +1,4 @@
 import random
-from pygame import mixer
 import pygame
 import sys
 import os
@@ -33,7 +32,7 @@ def Strup(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
@@ -53,7 +52,7 @@ def Schulte(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
@@ -71,7 +70,7 @@ def Table(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
@@ -89,7 +88,7 @@ def Cursor(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
@@ -107,7 +106,7 @@ def Result(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
         screen.blit(fon, (0, 0))
         pygame.display.flip()
@@ -160,7 +159,7 @@ class Button(pygame.sprite.Sprite):
 
     def update(self, even_list):
         for event in even_list:
-            if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.rect.collidepoint(event.pos):
                 s.play()
                 self.flag = not self.flag
             elif event.type == pygame.MOUSEMOTION and self.rect.collidepoint(event.pos):
@@ -203,20 +202,20 @@ def start_screen(screen, all_sprites):
     clock = pygame.time.Clock()
     fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
     font = pygame.font.Font(fullname, 37)
-    start = font.render(' Начать', True, BLACK)
-    finish = font.render('Выйти', True, BLACK)
+    start1 = font.render(' Начать', True, BLACK)
+    finish1 = font.render('Выйти', True, BLACK)
+    start2 = font.render(' Начать', True, BLACK, (179, 233, 230))
+    finish2 = font.render('Выйти', True, BLACK, (179, 233, 230))
     name = font.render('Приложение для развития навыков при', True, BLACK)
     name1 = font.render('подготовке к ЕГЭ по информатике', True, BLACK)
     start_x = 235
     start_y = 400
-    start_w = start.get_width()
-    start_h = start.get_height()
-    screen.blit(start, (start_x, start_y))
+    start_w = start1.get_width()
+    start_h = start1.get_height()
+    screen.blit(start1, (start_x, start_y))
     finish_x = 435
     finish_y = 400
-    finish_w = finish.get_width()
-    finish_h = finish.get_height()
-    screen.blit(finish, (finish_x, finish_y))
+    screen.blit(finish1, (finish_x, finish_y))
     name_x = width // 2 - name.get_width() // 2
     name_y = height // 2 - name.get_height() // 2 - 175
     screen.blit(name, (name_x, name_y))
@@ -231,24 +230,19 @@ def start_screen(screen, all_sprites):
     screen.blit(nota, (0, 0))
     flag = False
     touch = False
-    music = Button((0, 0), flag, touch,  (45, 45))
+
+    start_btn = Button((start_x, start_y), flag, touch,
+                       (start1.get_height(), start1.get_width()))
+
+    finish_btn = Button((finish_x, finish_y), flag, touch,
+                        (finish1.get_height(), finish1.get_width()))
+    music = Button((0, 0), flag, touch, (45, 45))
     while True:
         even_list = pygame.event.get()
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-
-            elif event.type == pygame.MOUSEBUTTONDOWN and start_x - 10 <= event.pos[0] <= (
-                    start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
-                    start_y + start_h + 20):
-                s.play()
-                return
-            elif event.type == pygame.MOUSEBUTTONDOWN and finish_x - 10 <= event.pos[0] <= (
-                    finish_x + finish_w + 20) and finish_y - 10 <= event.pos[1] <= (
-                    finish_y + finish_h + 20):
-                s.play()
-                terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN and music.x <= event.pos[0] <= (
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and music.x <= event.pos[0] <= (
                     music.x + music.w) and music.y <= event.pos[1] <= (
                     music.y + music.h):
                 music.update(even_list)
@@ -256,11 +250,24 @@ def start_screen(screen, all_sprites):
                     pygame.mixer.music.play(-1)
                 else:
                     pygame.mixer.music.stop()
-            elif event.type == pygame.MOUSEBUTTONDOWN and not (start_x - 10 <= event.pos[0] <= (
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not (start_x - 10 <= event.pos[0] <= (
                     start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
                                                                        start_y + start_h + 20)):
                 star.play()
                 create_particles(pygame.mouse.get_pos(), all_sprites)
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                finish_btn.update(even_list)
+                start_btn.update(even_list)
+                if finish_btn.flag:
+                    terminate()
+                elif start_btn.flag:
+                    return
+            elif event.type == pygame.MOUSEMOTION:
+                finish_btn.update(even_list)
+                start_btn.update(even_list)
+                pass
+
         all_sprites.update()
         screen.fill((255, 255, 255))
         screen.blit(fon, (0, 0))
@@ -268,8 +275,13 @@ def start_screen(screen, all_sprites):
         all_sprites.draw(screen)
         screen.blit(name, (name_x, name_y))
         screen.blit(name1, (name1_x, name1_y))
-        screen.blit(start, (start_x, start_y))
-        screen.blit(finish, (finish_x, finish_y))
+        if start_btn.touch:
+
+            screen.blit(start2, (start_x, start_y))
+        elif finish_btn.touch:
+            screen.blit(finish2, (finish_x, finish_y))
+        screen.blit(start1, (start_x, start_y))
+        screen.blit(finish1, (finish_x, finish_y))
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -334,7 +346,7 @@ def main_window(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 group.update(even_list)
                 if strup.flag:
                     Strup(screen)
@@ -414,7 +426,7 @@ def final_window(screen):  # это окно нужно будет потом и
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
 
         screen.blit(fon, (0, 0))
