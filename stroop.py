@@ -10,11 +10,11 @@ ORANGE = (255, 102, 0)
 
 COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET, ORANGE]
 COLOR_WORD = ['КРАСНЫЙ', 'ОРАНЖЕВЫЙ', 'СИНИЙ', 'ФИОЛЕТОВЫЙ', 'ЗЕЛЕНЫЙ', 'ЖЕЛТЫЙ']
-WIDTH = 750
-HEIGHT = 750
+width = 750
+height = 750
 
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((width, height))
 
 class StroopTest:
     def __init__(self):
@@ -28,11 +28,11 @@ class StroopTest:
             sprite = pygame.sprite.Sprite()
             sprite.image = text
             sprite.rect = sprite.image.get_rect()
-            sprite.rect.y = random.randint(0, HEIGHT - sprite.rect.height)
-            sprite.rect.x = random.randint(0, WIDTH - sprite.rect.width)
+            sprite.rect.y = random.randint(0, height - sprite.rect.height)
+            sprite.rect.x = random.randint(0, width - sprite.rect.width)
             while pygame.sprite.spritecollideany(sprite, all_sprites):
-                sprite.rect.y = random.randint(0, HEIGHT - sprite.rect.height)
-                sprite.rect.x = random.randint(0, WIDTH - sprite.rect.width)
+                sprite.rect.y = random.randint(0, height - sprite.rect.height)
+                sprite.rect.x = random.randint(0, width - sprite.rect.width)
             all_sprites.add(sprite)
 
 
