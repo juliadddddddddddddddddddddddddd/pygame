@@ -34,6 +34,7 @@ def Strup(screen):
     all_sprites = pygame.sprite.Group()
     stroop = StroopTest()
     stroop.draw_words(all_sprites)
+    vol = 0.5
     running = True
     while running:
         for event in pygame.event.get():
@@ -41,6 +42,12 @@ def Strup(screen):
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                vol -= 0.1
+                pygame.mixer.music.set_volume(vol)
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                vol += 0.1
+                pygame.mixer.music.set_volume(vol)
         screen.fill((0, 0, 0))
         all_sprites.draw(screen)
         pygame.display.flip()
@@ -52,6 +59,7 @@ def Strup(screen):
 def Schulte(screen):
     clock = pygame.time.Clock()
     board = Board(150)
+    vol = 0.5
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -59,6 +67,12 @@ def Schulte(screen):
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                vol -= 0.1
+                pygame.mixer.music.set_volume(vol)
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                vol += 0.1
+                pygame.mixer.music.set_volume(vol)
         screen.fill((255, 255, 255))
         board.draw(screen)
         pygame.display.flip()
@@ -253,6 +267,7 @@ def create_particles(position, all_sprites):
 
 def start_screen(screen, all_sprites):
     clock = pygame.time.Clock()
+    vol = 0.5
     fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
     font = pygame.font.Font(fullname, 37)
     start1 = font.render(' Начать', True, BLACK)
@@ -295,6 +310,12 @@ def start_screen(screen, all_sprites):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                vol -= 0.1
+                pygame.mixer.music.set_volume(vol)
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                vol += 0.1
+                pygame.mixer.music.set_volume(vol)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and music.x <= event.pos[0] <= (
                     music.x + music.w) and music.y <= event.pos[1] <= (
                     music.y + music.h):
@@ -343,6 +364,7 @@ def start_screen(screen, all_sprites):
 def main_window(screen):
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
+    vol = 0.5
 
     intro_text = ["Тест Струпа",
                   "Таблицы Шульте",
@@ -398,6 +420,12 @@ def main_window(screen):
         for event in even_list:
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 5:
+                vol -= 0.1
+                pygame.mixer.music.set_volume(vol)
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 4:
+                vol += 0.1
+                pygame.mixer.music.set_volume(vol)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 group.update(even_list)
                 if strup.flag:
@@ -480,6 +508,7 @@ def final_window(screen):  # это окно нужно будет потом и
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
+
 
         screen.blit(fon, (0, 0))
         pygame.display.flip()
