@@ -15,8 +15,8 @@ star = pygame.mixer.Sound(fullname)
 fullname = os.path.join('data', "музыка_на_фон.mp3")
 pygame.mixer.music.load(fullname)
 
-width = 800
-height = 800
+width = 750
+height = 750
 screen = pygame.display.set_mode((width, height))
 BLACK = (11, 76, 87)
 
@@ -42,21 +42,17 @@ def Strup(screen):
 # эти класы потом нужно будет заменить
 # также нужно добавить кнопку для того чтобы возвращаться обратно в меню
 def Schulte(screen):
-    clock = pygame.time.Clock()
-    screen.fill((255, 255, 255))
-    fon = pygame.transform.scale(load_image('когнетивные2.png'),
-                                 (width, height))
-    screen.blit(fon, (0, 0))
+    board = Board(150)
     while True:
-        even_list = pygame.event.get()
-        for event in even_list:
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                terminate()
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 return
-        screen.blit(fon, (0, 0))
+        screen.fill((255, 255, 255))
+        board.draw(screen)
         pygame.display.flip()
-        clock.tick(FPS)
 
 
 def Table(screen):
@@ -168,6 +164,33 @@ class Button(pygame.sprite.Sprite):
                 self.touch = False
 
 
+class Board:
+    def __init__(self, cell_size):
+        self.cell_size = cell_size
+        self.font = pygame.font.SysFont(None, 40)
+        self.board = [[0 for _ in range(5)] for _ in range(5)]
+        self.generate_numbers()
+
+    def generate_numbers(self):
+        nums = random.sample(range(1, 5 * 5 + 1), 5 * 5)
+        for i in range(5):
+            for j in range(5):
+                self.board[i][j] = nums[i * 5 + j]
+
+    def draw(self, screen):
+        for i in range(5):
+            for j in range(5):
+                number = self.board[i][j]
+                text = self.font.render(str(number), True, (0, 0, 0))
+                text_rect = text.get_rect(
+                    center=(j * self.cell_size + self.cell_size // 2, i * self.cell_size + self.cell_size // 2))
+                screen.blit(text, text_rect)
+                pygame.draw.rect(screen, pygame.Color('black'),
+                                 (i * self.cell_size,
+                                  j * self.cell_size,
+                                  self.cell_size, self.cell_size), 1)
+
+
 class Particle(pygame.sprite.Sprite):
     fire = [load_image("star.png")]
     for scale in (5, 10, 20):
@@ -252,7 +275,7 @@ def start_screen(screen, all_sprites):
                     pygame.mixer.music.stop()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not (start_x - 10 <= event.pos[0] <= (
                     start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
-                                                                       start_y + start_h + 20)):
+                                                                                             start_y + start_h + 20)):
                 star.play()
                 create_particles(pygame.mouse.get_pos(), all_sprites)
 
