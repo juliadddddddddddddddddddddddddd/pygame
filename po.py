@@ -14,7 +14,8 @@ fullname = os.path.join('data', "zvuk3.wav")
 star = pygame.mixer.Sound(fullname)
 fullname = os.path.join('data', "музыка_на_фон.mp3")
 pygame.mixer.music.load(fullname)
-
+pygame.mixer.music.set_volume(0.5)
+font_name = fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
 width = 750
 height = 750
 screen = pygame.display.set_mode((width, height))
@@ -268,8 +269,7 @@ def create_particles(position, all_sprites):
 def start_screen(screen, all_sprites):
     clock = pygame.time.Clock()
     vol = 0.5
-    fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
-    font = pygame.font.Font(fullname, 37)
+    font = pygame.font.Font(font_name, 37)
     start1 = font.render(' Начать', True, BLACK)
     finish1 = font.render('Выйти', True, BLACK)
     start2 = font.render(' Начать', True, BLACK, (179, 233, 230))
@@ -378,8 +378,7 @@ def main_window(screen):
     nota = pygame.transform.scale(load_image('нота.png'),
                                   (45, 45))
     screen.blit(nota, (0, 0))
-    fullname = os.path.join('data', "Gilroy-ExtraBold.otf")
-    font = pygame.font.Font(fullname, 42)
+    font = pygame.font.Font(font_name, 42)
     strup1 = font.render(intro_text[0], True, BLACK)
     schulte1 = font.render(intro_text[1], True, BLACK)
     table1 = font.render(intro_text[2], True, BLACK)
@@ -390,20 +389,20 @@ def main_window(screen):
     flag = False
     touch = False
 
-    strup = Button((screen.get_width() // 2 - strup1.get_width() // 2, 200), flag, touch,
+    strup = Button((screen.get_width() // 2 - strup1.get_width() // 2, 150), flag, touch,
                    (strup1.get_height(), strup1.get_width()))
 
-    schulte = Button((screen.get_width() // 2 - schulte1.get_width() // 2, 300), flag, touch,
+    schulte = Button((screen.get_width() // 2 - schulte1.get_width() // 2, 250), flag, touch,
                      (schulte1.get_height(), schulte1.get_width()))
 
-    table = Button((screen.get_width() // 2 - table1.get_width() // 2, 400), flag, touch,
+    table = Button((screen.get_width() // 2 - table1.get_width() // 2, 350), flag, touch,
                    (table1.get_height(), table1.get_width()))
 
-    cursor = Button((screen.get_width() // 2 - cursor12.get_width() // 2, 500), flag, touch,
+    cursor = Button((screen.get_width() // 2 - cursor12.get_width() // 2, 450), flag, touch,
                     (cursor11.get_height() + cursor12.get_height(),
                      cursor12.get_width()))
 
-    result = Button((screen.get_width() // 2 - result1.get_width() // 2, 645), flag, touch,
+    result = Button((screen.get_width() // 2 - result1.get_width() // 2, 595), flag, touch,
                     (result1.get_height(), result1.get_width()))
 
     music = Button((0, 0), flag, touch, (45, 45))
