@@ -2,6 +2,7 @@ import random
 import pygame
 import sys
 import os
+import time
 
 GRAVITY = 0.045
 FPS = 50
@@ -56,12 +57,13 @@ def Strup(screen):
         clock.tick(FPS)
 
 
-# эти класы потом нужно будет заменить
-# также нужно добавить кнопку для того чтобы возвращаться обратно в меню
 def Schulte(screen):
     clock = pygame.time.Clock()
     board = Board(150)
     vol = 0.5
+    sec = 0
+    minu = 0
+    font = pygame.font.Font(None, 35)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -77,7 +79,19 @@ def Schulte(screen):
                 pygame.mixer.music.set_volume(vol)
         screen.fill((255, 255, 255))
         board.draw(screen)
+
+        pygame.draw.rect(screen, BLACK, (0, 0, 75, 35), 1)
+        if sec < 10:
+            time_text = font.render(f'{minu}:0{sec}', True, (0, 0, 0))
+        else:
+            time_text = font.render(f'{minu}:{sec}', True, (0, 0, 0))
+        screen.blit(time_text, (5, 5, 75, 35))
+
         pygame.display.flip()
+        time.sleep(1)
+        sec += 1
+        minu += sec // 60
+        sec = sec % 60
         clock.tick(FPS)
 
 
