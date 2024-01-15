@@ -4,7 +4,6 @@ import sqlite3
 import pygame
 import sys
 import os
-import time
 
 GRAVITY = 0.045
 FPS = 50
@@ -34,6 +33,32 @@ COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET, ORANGE]
 COLOR_WORD = ['КРАСНЫЙ', 'ОРАНЖЕВЫЙ', 'СИНИЙ', 'ФИОЛЕТОВЫЙ', 'ЗЕЛЕНЫЙ', 'ЖЕЛТЫЙ']
 
 
+class TextRenderer:
+    def __init__(self, screen, font, text, x, y, max_width):
+        self.screen = screen
+        self.font = font
+        self.text = text
+        self.x = x
+        self.y = y
+        self.max_width = max_width
+
+    def render_text(self):
+        words = [word.split(' ') for word in self.text.splitlines()]
+        space = self.font.size(' ')[0]
+
+        for line in words:
+            for word in line:
+                word_surface = self.font.render(word, True, (0, 0, 0))
+                word_width, word_height = word_surface.get_size()
+                if self.x + word_width >= self.max_width:
+                    self.x = 10
+                    self.y += word_height
+                self.screen.blit(word_surface, (self.x, self.y))
+                self.x += word_width + space
+            self.x = 10
+            self.y += word_height
+
+
 def Strup(screen):
     clock = pygame.time.Clock()
     all_sprites = pygame.sprite.Group()
@@ -42,12 +67,16 @@ def Strup(screen):
     vol = 0.5
     sec = 0
     minu = 0
+    time = 0
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                sec += time // 1000
+                minu += sec // 60
+                sec = sec % 60
                 if sec < 10:
                     return f'{minu}:0{sec}'
                 return f'{minu}:{sec}'
@@ -60,17 +89,14 @@ def Strup(screen):
         screen.fill((0, 0, 0))
         all_sprites.draw(screen)
         pygame.display.flip()
-        time.sleep(1)
-        sec += 1
-        minu += sec // 60
-        sec = sec % 60
-        clock.tick(FPS)
+        time += clock.tick(FPS)
 
 
 def Schulte(screen):
     clock = pygame.time.Clock()
     board = Board(150)
     vol = 0.5
+    time = 0
     sec = 0
     minu = 0
     font = pygame.font.Font(None, 35)
@@ -93,6 +119,11 @@ def Schulte(screen):
         board.draw(screen)
 
         pygame.draw.rect(screen, BLACK, (5, 5, 60, 30), 1)
+        sec = 0
+        minu = 0
+        sec += time // 1000
+        minu += sec // 60
+        sec = sec % 60
         if sec < 10:
             time_text = font.render(f'{minu}:0{sec}', True, (0, 0, 0))
         else:
@@ -100,11 +131,7 @@ def Schulte(screen):
         screen.blit(time_text, (10, 8, 60, 30))
 
         pygame.display.flip()
-        time.sleep(1)
-        sec += 1
-        minu += sec // 60
-        sec = sec % 60
-        clock.tick(FPS)
+        time += clock.tick(FPS)
 
 
 def Table(screen):
@@ -113,6 +140,7 @@ def Table(screen):
     alpth = num.generate_random_numbers(10)
     alpth1 = num.generate_additional_numbers(20)
     running = True
+    time = 0
     sec = 0
     minu = 0
     while running:
@@ -120,35 +148,56 @@ def Table(screen):
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                sec += time // 1000
+                minu += sec // 60
+                sec = sec % 60
                 if sec < 10:
                     return f'{minu}:0{sec}'
                 return f'{minu}:{sec}'
         num.display_numbers(alpth, alpth1)
         pygame.display.flip()
-
-        time.sleep(1)
-        sec += 1
-        minu += sec // 60
-        sec = sec % 60
-        clock.tick(FPS)
+        time += clock.tick(FPS)
 
 
 def Cursor(screen):
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
-    fon = pygame.transform.scale(load_image('когнетивные2.png'),
-                                 (width, height))
-    screen.blit(fon, (0, 0))
+    font = pygame.font.SysFont('Times New Roman', 28)
+    sec = 0
+    minu = 0
+    time = 0
+    con = sqlite3.connect('tests (2).db')
+    cur = con.cursor()
+    text = cur.execute(f"""SELECT file_name FROM text WHERE id = {random.randint(1, 2)}""").fetchone()
+    with open(text[0], encoding='utf8') as f:
+        text = f.read()
+    renderer = TextRenderer(screen, font, text, 10, 10, 750)
+    renderer.render_text()
+    pygame.mouse.set_visible(False)
+    all_sprites = pygame.sprite.Group()
+    Arrow(all_sprites)
     while True:
-        even_list = pygame.event.get()
-        for event in even_list:
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                return
-        screen.blit(fon, (0, 0))
+                sec += time // 1000
+                minu += sec // 60
+                sec = sec % 60
+                if sec < 10:
+                    return f'{minu}:0{sec}'
+                return f'{minu}:{sec}'
+            elif event.type == pygame.MOUSEMOTION:
+                all_sprites.update(event)
+
+        screen.fill((255, 255, 255))
+        renderer = TextRenderer(screen, font, text, 10, 10, 750)
+        renderer.render_text()
+        if pygame.mouse.get_focused():
+            all_sprites.draw(screen)
+
         pygame.display.flip()
-        clock.tick(FPS)
+        time += clock.tick(FPS)
 
 
 def terminate():
@@ -213,6 +262,18 @@ class Button(pygame.sprite.Sprite):
                 self.touch = True
             elif event.type == pygame.MOUSEMOTION and not (self.rect.collidepoint(event.pos)):
                 self.touch = False
+
+
+class Arrow(pygame.sprite.Sprite):
+    image = load_image("arrow.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = Arrow.image
+        self.rect = self.image.get_rect()
+
+    def update(self, *args):
+        self.rect.topleft = args[0].pos
 
 
 class StroopTest:
@@ -476,10 +537,12 @@ def main_window(screen):
 
                     schulte.flag = False
                 elif cursor.flag:
-                    # не забыть про бд
                     final_window(screen, 3)
-                    Cursor(screen)
+
+                    cur.execute(f"""INSERT INTO Cursor(time) VALUES(?)""", (Cursor(screen),))
+                    con.commit()
                     cursor.flag = False
+                    pygame.mouse.set_visible(True)
                 elif table.flag:
                     final_window(screen, 4)
                     cur.execute(f"""INSERT INTO Table_(time) VALUES(?)""", (Table(screen),))
@@ -522,7 +585,7 @@ def main_window(screen):
         clock.tick(FPS)
 
 
-def final_window(screen, id):  # это окно нужно будет потом изменить (возможно здесь как раз таки и выводить результаты)
+def final_window(screen, id):
     clock = pygame.time.Clock()
     con = sqlite3.connect('pygamebase.db')
     cur = con.cursor()
@@ -557,7 +620,7 @@ def final_window(screen, id):  # это окно нужно будет пото�
         for i in results[-10::]:
             f = font.render(i[0], True, BLACK)
             screen.blit(f, (
-            screen.get_width() // 2 - f.get_width() // 2, 150 + (50 * count), f.get_height(), f.get_width()))
+                screen.get_width() // 2 - f.get_width() // 2, 150 + (50 * count), f.get_height(), f.get_width()))
             count += 1
     while True:
         even_list = pygame.event.get()
@@ -597,8 +660,6 @@ def main():
     all_sprites = pygame.sprite.Group()
     start_screen(screen, all_sprites)
     main_window(screen)
-    final_window(screen)
-
     running = True
     pygame.display.flip()
     while running:
