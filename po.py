@@ -465,21 +465,25 @@ def main_window(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 group.update(even_list)
                 if strup.flag:
-                    final_window(screen)
+                    final_window(screen, 1)
                     cur.execute(f"""INSERT INTO Stroop(time) VALUES(?)""", (Strup(screen),))
                     con.commit()
                     strup.flag = False
                 elif schulte.flag:
-                    final_window(screen)
-                    Schulte(screen)
+                    final_window(screen, 2)
+                    cur.execute(f"""INSERT INTO Schulte(time) VALUES(?)""", (Schulte(screen),))
+                    con.commit()
+
                     schulte.flag = False
                 elif cursor.flag:
-                    final_window(screen)
+                    # не забыть про бд
+                    final_window(screen, 3)
                     Cursor(screen)
                     cursor.flag = False
                 elif table.flag:
-                    final_window(screen)
-                    Table(screen)
+                    final_window(screen, 4)
+                    cur.execute(f"""INSERT INTO Table_(time) VALUES(?)""", (Table(screen),))
+                    con.commit()
                     table.flag = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and music.x <= event.pos[0] <= (
                         music.x + music.w) and music.y <= event.pos[1] <= (
@@ -518,8 +522,10 @@ def main_window(screen):
         clock.tick(FPS)
 
 
-def final_window(screen):  # это окно нужно будет потом изменить (возможно здесь как раз таки и выводить результаты)
+def final_window(screen, id):  # это окно нужно будет потом изменить (возможно здесь как раз таки и выводить результаты)
     clock = pygame.time.Clock()
+    con = sqlite3.connect('pygamebase.db')
+    cur = con.cursor()
     fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
     font = pygame.font.Font(font_name, 37)
@@ -527,11 +533,32 @@ def final_window(screen):  # это окно нужно будет потом и
     start2 = font.render(' Начать', True, BLACK, (179, 233, 230))
     res = font.render('Предыдущие результаты', True, BLACK)
     screen.blit(fon, (0, 0))
+    if id == 1:
+        results = cur.execute(f"""SELECT time FROM Stroop""").fetchall()
+        print(results)
+    elif id == 2:
+        results = cur.execute(f"""SELECT time FROM Schulte""").fetchall()
+    elif id == 3:
+        results = cur.execute(f"""SELECT time FROM Cursor""").fetchall()
+    else:
+        results = cur.execute(f"""SELECT time FROM Table_""").fetchall()
 
     flag = False
     touch = False
     start_btn = Button((screen.get_width() // 2 - start1.get_width() // 2 - 15, 650), flag, touch,
                        (start1.get_height(), start1.get_width()))
+    if len(results) < 11:
+        for i in range(len(results), 0, -1):
+            f = font.render(results[i - 1][0], True, BLACK)
+            screen.blit(f,
+                        (screen.get_width() // 2 - f.get_width() // 2, 100 + (50 * i), f.get_height(), f.get_width()))
+    else:
+        count = 0
+        for i in results[-10::]:
+            f = font.render(i[0], True, BLACK)
+            screen.blit(f, (
+            screen.get_width() // 2 - f.get_width() // 2, 150 + (50 * count), f.get_height(), f.get_width()))
+            count += 1
     while True:
         even_list = pygame.event.get()
         for event in even_list:
@@ -549,6 +576,18 @@ def final_window(screen):  # это окно нужно будет потом и
         screen.blit(start1, start_btn.rect_for_text)
         if start_btn.touch:
             screen.blit(start2, start_btn.rect_for_text)
+        if len(results) < 11:
+            for i in range(len(results), 0, -1):
+                f = font.render(results[i - 1][0], True, BLACK)
+                screen.blit(f, (
+                    screen.get_width() // 2 - f.get_width() // 2, 100 + (50 * i), f.get_height(), f.get_width()))
+        else:
+            count = 0
+            for i in results[-10::]:
+                f = font.render(i[0], True, BLACK)
+                screen.blit(f, (
+                    screen.get_width() // 2 - f.get_width() // 2, 150 + (50 * count), f.get_height(), f.get_width()))
+                count += 1
 
         pygame.display.flip()
         clock.tick(FPS)
