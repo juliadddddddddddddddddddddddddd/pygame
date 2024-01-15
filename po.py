@@ -1,4 +1,6 @@
 import random
+import sqlite3
+
 import pygame
 import sys
 import os
@@ -408,6 +410,8 @@ def main_window(screen):
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
     vol = 0.5
+    con = sqlite3.connect('pygamebase.db')
+    cur = con.cursor()
 
     intro_text = ["Тест Струпа",
                   "Таблицы Шульте",
@@ -462,7 +466,8 @@ def main_window(screen):
                 group.update(even_list)
                 if strup.flag:
                     final_window(screen)
-                    Strup(screen)
+                    cur.execute(f"""INSERT INTO Stroop(time) VALUES(?)""", (Strup(screen),))
+                    con.commit()
                     strup.flag = False
                 elif schulte.flag:
                     final_window(screen)
@@ -540,7 +545,7 @@ def final_window(screen):  # это окно нужно будет потом и
                 start_btn.update(even_list)
                 pass
         screen.blit(fon, (0, 0))
-        screen.blit(res, (screen.get_width() // 2 - res.get_width() // 2 , 100, res.get_height(), res.get_width()))
+        screen.blit(res, (screen.get_width() // 2 - res.get_width() // 2, 100, res.get_height(), res.get_width()))
         screen.blit(start1, start_btn.rect_for_text)
         if start_btn.touch:
             screen.blit(start2, start_btn.rect_for_text)
