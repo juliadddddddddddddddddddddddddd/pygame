@@ -7,10 +7,20 @@ from main import height
 from main import FPS
 
 
+def sattoloCycle(items):
+    items = items.copy()
+    i = len(items)
+    while i > 1:
+        i = i - 1
+        j = random.randrange(i)  # 0 <= j <= i-1
+        items[j], items[i] = items[i], items[j]
+    return items
+
+
 class StroopTest:
     def __init__(self):
-        self.color_words = random.sample(COLOR_WORD, len(COLOR_WORD))
-        self.colors = random.sample(COLORS, len(COLORS))
+        self.color_words = COLOR_WORD
+        self.colors = sattoloCycle(COLORS)
         self.font = pygame.font.Font(None, 50)
 
     def draw_words(self, all_sprites):
@@ -19,11 +29,11 @@ class StroopTest:
             sprite = pygame.sprite.Sprite()
             sprite.image = text
             sprite.rect = sprite.image.get_rect()
-            sprite.rect.y = random.randint(0, height - sprite.rect.height)
-            sprite.rect.x = random.randint(0, width - sprite.rect.width)
+            sprite.rect.y = random.randint(0, HEIGHT - sprite.rect.height)
+            sprite.rect.x = random.randint(0, WIDTH - sprite.rect.width)
             while pygame.sprite.spritecollideany(sprite, all_sprites):
-                sprite.rect.y = random.randint(0, height - sprite.rect.height)
-                sprite.rect.x = random.randint(0, width - sprite.rect.width)
+                sprite.rect.y = random.randint(0, HEIGHT - sprite.rect.height)
+                sprite.rect.x = random.randint(0, WIDTH - sprite.rect.width)
             all_sprites.add(sprite)
 
 
