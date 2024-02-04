@@ -7,6 +7,7 @@ FPS = 50
 pygame.mixer.pre_init(44100, -16, 1, 512)
 
 pygame.init()
+pygame.display.set_caption('Приложение для развития навыков при подготовке к ЕГЭ по информатике')
 s = pygame.mixer.Sound('data/sounds/звук_нажатия_на_кнопку.ogg')
 star = pygame.mixer.Sound('data/sounds/zvuk3.wav')
 pygame.mixer.music.load('data/sounds/музыка_на_фон.mp3')
