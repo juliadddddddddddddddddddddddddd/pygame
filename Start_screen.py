@@ -47,26 +47,22 @@ def create_particles(position, all_sprites):
 def start_screen(screen, all_sprites):
     clock = pygame.time.Clock()
     vol = 0.5
-    font = pygame.font.Font(font_name, 37)
-    start1 = font.render(' Начать', True, BLACK)
-    start2 = font.render(' Начать', True, BLACK, (179, 233, 230))
-    finish1 = font.render('Выйти', True, BLACK)
-    finish2 = font.render('Выйти', True, BLACK, (179, 233, 230))
+    font = pygame.font.Font(font_name, 39)
+    font1 = pygame.font.Font(font_name, 45)
+    start1 = font1.render(' Начать', True, BLACK)
+    start2 = font1.render(' Начать', True, BLACK, (179, 233, 230))
     name = font.render('Приложение для развития навыков при', True, BLACK)
     name1 = font.render('подготовке к ЕГЭ по информатике', True, BLACK)
-    start_x = 235
+    start_x = width // 2 - start1.get_width() // 2
     start_y = 400
     start_w = start1.get_width()
     start_h = start1.get_height()
     screen.blit(start1, (start_x, start_y))
-    finish_x = 435
-    finish_y = 400
-    screen.blit(finish1, (finish_x, finish_y))
     name_x = width // 2 - name.get_width() // 2
-    name_y = height // 2 - name.get_height() // 2 - 175
+    name_y = height // 2 - name.get_height() // 2 - 165
     screen.blit(name, (name_x, name_y))
     name1_x = width // 2 - name1.get_width() // 2
-    name1_y = height // 2 - name1.get_height() // 2 - 105
+    name1_y = height // 2 - name1.get_height() // 2 - 95
     screen.blit(name1, (name1_x, name1_y))
     fon = pygame.transform.scale(load_image('когнетивные2.png'),
                                  (width, height))
@@ -79,9 +75,6 @@ def start_screen(screen, all_sprites):
 
     start_btn = Button((start_x, start_y), flag, touch,
                        (start1.get_height(), start1.get_width()))
-
-    finish_btn = Button((finish_x, finish_y), flag, touch,
-                        (finish1.get_height(), finish1.get_width()))
     music = Button((0, 0), flag, touch, (45, 45))
     while True:
         even_list = pygame.event.get()
@@ -102,21 +95,16 @@ def start_screen(screen, all_sprites):
                     pygame.mixer.music.play(-1)
                 else:
                     pygame.mixer.music.stop()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not (start_x - 10 <= event.pos[0] <= (
-                    start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (
-                                                                                             start_y + start_h + 20)):
+            elif (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not (start_x - 10 <= event.pos[0] <= (
+                    start_x + start_w + 20) and start_y - 10 <= event.pos[1] <= (start_y + start_h + 20))):
                 star.play()
                 create_particles(pygame.mouse.get_pos(), all_sprites)
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                finish_btn.update(even_list)
                 start_btn.update(even_list)
-                if finish_btn.flag:
-                    terminate()
-                elif start_btn.flag:
+                if start_btn.flag:
                     return
             elif event.type == pygame.MOUSEMOTION:
-                finish_btn.update(even_list)
                 start_btn.update(even_list)
                 pass
 
@@ -128,12 +116,8 @@ def start_screen(screen, all_sprites):
         screen.blit(name, (name_x, name_y))
         screen.blit(name1, (name1_x, name1_y))
         if start_btn.touch:
-
             screen.blit(start2, (start_x, start_y))
-        elif finish_btn.touch:
-            screen.blit(finish2, (finish_x, finish_y))
         screen.blit(start1, (start_x, start_y))
-        screen.blit(finish1, (finish_x, finish_y))
 
         pygame.display.flip()
         clock.tick(FPS)

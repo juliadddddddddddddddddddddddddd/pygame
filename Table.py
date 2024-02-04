@@ -5,6 +5,7 @@ from main import screen
 from main import width
 from main import FPS
 
+
 class RandomNumbersDisplay:
     def __init__(self):
         self.font = pygame.font.Font(None, 36)
@@ -32,7 +33,10 @@ class RandomNumbersDisplay:
             y += 60  # Увеличение координаты Y для следующего числа
             x += 20
 
-def Table(screen):
+
+def Table(screen, return_flag):
+    if return_flag:
+        return
     clock = pygame.time.Clock()
     num = RandomNumbersDisplay()
     alpth = num.generate_random_numbers(10)

@@ -7,6 +7,7 @@ from main import load_image
 from main import terminate
 from main import FPS
 
+
 class Arrow(pygame.sprite.Sprite):
     image = load_image("arrow.png")
 
@@ -44,7 +45,10 @@ class TextRenderer:
             self.x = 10
             self.y += word_height
 
-def Cursor(screen):
+
+def Cursor(screen, return_flag):
+    if return_flag:
+        return
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
     font = pygame.font.SysFont('Times New Roman', 28)

@@ -37,7 +37,9 @@ class StroopTest:
             all_sprites.add(sprite)
 
 
-def Strup(screen):
+def Strup(screen, return_flag):
+    if return_flag:
+        return
     clock = pygame.time.Clock()
     all_sprites = pygame.sprite.Group()
     stroop = StroopTest()

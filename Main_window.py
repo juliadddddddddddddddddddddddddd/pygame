@@ -15,7 +15,9 @@ from Schulte import Schulte
 from Table import Table
 from Cursor import Cursor
 
+
 def main_window(screen):
+    global RET
     clock = pygame.time.Clock()
     screen.fill((255, 255, 255))
     vol = 0.5
@@ -75,27 +77,29 @@ def main_window(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 group.update(even_list)
                 if strup.flag:
-                    final_window(screen, 1)
-                    cur.execute(f"""INSERT INTO Stroop(time) VALUES(?)""", (Strup(screen),))
-                    con.commit()
+                    time = Strup(screen, final_window(screen, 1))
+                    if time:
+                        cur.execute(f"""INSERT INTO Stroop(time) VALUES(?)""", (time,))
+                        con.commit()
                     strup.flag = False
                 elif schulte.flag:
-                    final_window(screen, 2)
-                    cur.execute(f"""INSERT INTO Schulte(time) VALUES(?)""", (Schulte(screen),))
-                    con.commit()
-
+                    time = Schulte(screen, final_window(screen, 2))
+                    if time:
+                        cur.execute(f"""INSERT INTO Schulte(time) VALUES(?)""", (time,))
+                        con.commit()
                     schulte.flag = False
                 elif cursor.flag:
-                    final_window(screen, 3)
-
-                    cur.execute(f"""INSERT INTO Cursor(time) VALUES(?)""", (Cursor(screen),))
-                    con.commit()
+                    time = Cursor(screen, final_window(screen, 3))
+                    if time:
+                        cur.execute(f"""INSERT INTO Cursor(time) VALUES(?)""", (time,))
+                        con.commit()
                     cursor.flag = False
                     pygame.mouse.set_visible(True)
                 elif table.flag:
-                    final_window(screen, 4)
-                    cur.execute(f"""INSERT INTO Table_(time) VALUES(?)""", (Table(screen),))
-                    con.commit()
+                    time = Table(screen, final_window(screen, 4))
+                    if time:
+                        cur.execute(f"""INSERT INTO Table_(time) VALUES(?)""", (time,))
+                        con.commit()
                     table.flag = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and music.x <= event.pos[0] <= (
                         music.x + music.w) and music.y <= event.pos[1] <= (

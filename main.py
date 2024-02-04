@@ -26,7 +26,6 @@ WHITE = (255, 255, 255)
 COLORS = [RED, YELLOW, GREEN, BLUE, VIOLET, ORANGE]
 COLOR_WORD = ['КРАСНЫЙ', 'ЖЕЛТЫЙ', 'ЗЕЛЕНЫЙ', 'СИНИЙ', 'ФИОЛЕТОВЫЙ', 'ОРАНЖЕВЫЙ']
 
-
 def terminate():
     pygame.quit()
     sys.exit()

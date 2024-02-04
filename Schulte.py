@@ -32,7 +32,9 @@ class Board:
                                   self.cell_size, self.cell_size), 1)
 
 
-def Schulte(screen):
+def Schulte(screen, return_flag):
+    if return_flag:
+        return
     clock = pygame.time.Clock()
     board = Board(150)
     vol = 0.5
